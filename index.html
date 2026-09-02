@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Federal de Egreso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* === RESET & GLOBALES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            color: #212529;
+            padding-bottom: 40px;
+        }
+
+        /* === HEADER / LOGO === */
+        header {
+            display: flex;
+            justify-content: center;
+            padding: 15px 20px;
+        }
+        header img {
+            max-width: 100%;
+            height: auto;
+            max-height: 50px;
+        }
+
+        /* === BLOQUE AZUL OSCURO === */
+        .hero-banner {
+            background-color: #222b4d;
+            border-top: 4px solid #c2a165;
+            padding: 30px 20px;
+            color: #ffffff;
+            font-family: 'Merriweather', serif;
+        }
+        .hero-banner h1 {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+        .hero-banner h2 {
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        /* === FORMULARIO DE BÚSQUEDA === */
+        .search-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #6c757d;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            background-color: #ffffff;
+        }
+        .form-group.active {
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .form-group label {
+            font-weight: 500;
+            color: #212529;
+            font-size: 15px;
+        }
+        .form-group input, .form-group select {
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-size: 15px;
+            color: #212529;
+            outline: none;
+            width: 50%;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .blockchain-link {
+            font-size: 14px;
+            color: #212529;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+        .blockchain-link a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+
+        /* === BOTONES === */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .btn {
+            width: 200px;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn-nueva {
+            background-color: #222b4d;
+        }
+        .btn-buscar {
+            background-color: #6c757d;
+        }
+
+        /* === RESULTADOS (TÍTULO Y TABLA) === */
+        .result-container {
+            padding: 0 20px;
+            display: block; 
+        }
+        .result-header {
+            background-color: #3bb2d6;
+            color: #ffffff;
+            padding: 15px 20px;
+            font-family: 'Merriweather', serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .nivel-educativo {
+            color: #3bb2d6;
+            font-size: 15px;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+        .nivel-educativo span {
+            color: #424242;
+        }
+
+        /* TABLA DESLIZABLE HORIZONTALMENTE */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 30px;
+            border: 1px solid #d1f0fa;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+        th {
+            background-color: #def3fa;
+            color: #6998a6;
+            font-weight: 700;
+            text-align: left;
+            padding: 15px 10px;
+            font-size: 14px;
+            border-right: 1px solid #d1f0fa;
+            border-bottom: 1px solid #d1f0fa;
+        }
+        th:last-child { border-right: none; }
+        
+        td {
+            padding: 15px 10px;
+            font-size: 14px;
+            color: #424242;
+            border-right: 1px solid #d1f0fa;
+            border-bottom: 1px solid #d1f0fa;
+            vertical-align: top;
+        }
+        td:last-child { border-right: none; }
+
+        .icon-blockchain {
+            width: 24px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .icon-blockchain:hover {
+            transform: scale(1.1);
+        }
+        .icon-ver {
+            width: 24px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            fill: #757575;
+        }
+
+        /* === FOOTER TEXT === */
+        .legal-text {
+            font-size: 14px;
+            color: #424242;
+            line-height: 1.5;
+            padding: 0 20px;
+            text-align: justify;
+        }
+
+        /* === MODAL BLOCKCHAIN === */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        .modal-title {
+            font-family: 'Merriweather', serif;
+            font-size: 22px;
+            font-weight: 400;
+            color: #333333;
+            padding: 20px;
+            line-height: 1.3;
+        }
+        .modal-divider {
+            border: 0;
+            border-top: 1px solid #e0e0e0;
+            margin: 0;
+        }
+        .modal-body {
+            display: flex;
+            padding: 20px;
+            gap: 15px;
+        }
+        .modal-icon-container {
+            flex-shrink: 0;
+            width: 80px;
+        }
+        .modal-text-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .text-ministerio {
+            font-family: 'Merriweather', serif;
+            font-size: 18px;
+            color: #333333;
+            line-height: 1.2;
+            margin-bottom: 4px;
+        }
+        .text-certificado {
+            font-size: 14px;
+            color: #333333;
+        }
+        .text-hash-label {
+            font-size: 14px;
+            color: #333333;
+            margin-top: 5px;
+        }
+        .text-hash-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1b8a4f;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+        .modal-footer {
+            padding: 0 20px 25px 20px;
+            font-size: 15px;
+            color: #333333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://refe.educacion.gob.ar/img/ReFE/Banner/ReFE-Banner-tipografia.svg" alt="Registro Federal de Egreso ReFE">
+    </header>
+
+    <div class="hero-banner">
+        <h1>Dirección de Validez Nacional de Títulos y Estudios</h1>
+        <h2>Registro Federal de Egreso</h2>
+    </div>
+
+    <div class="search-container">
+        <div class="form-group active">
+            <label>Tipo de Certificado</label>
+            <select>
+                <option>Título</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Tipo de Documento</label>
+            <select>
+                <option>DNI</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Número de Documento</label>
+            <input type="text" id="input-doc" value="21728276">
+        </div>
+        <div class="form-group">
+            <label>Apellido</label>
+            <input type="text" id="input-apellido" value="SOSA">
+        </div>
+        <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" id="input-nombre" value="ALBERTO JAVIER">
+        </div>
+
+        <div class="blockchain-link">
+            Si deseas ver tu título en la Blockchain Federal Argentina, haz <a href="#">click aquí</a>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-nueva" onclick="nuevaBusqueda()">Nueva búsqueda</button>
+            <button class="btn btn-buscar" onclick="buscarDatos()">Buscar</button>
+        </div>
+    </div>
+
+    <div class="result-container" id="seccion-resultados">
+        <div class="result-header">
+            Nombre y Apellido: SOSA ALBERTO JAVIER - Título
+        </div>
+        
+        <div class="nivel-educativo">
+            Nivel Educativo: <span>Educación secundaria completa</span>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo de Documento</th>
+                        <th>N° de Documento</th>
+                        <th>Título</th>
+                        <th>Jurisdicción</th>
+                        <th>Institución Educativa</th>
+                        <th>CUE</th>
+                        <th>Fecha de Egreso</th>
+                        <th>Normativa Jurisdiccional</th>
+                        <th>Normativa Nacional</th>
+                        <th>N° de Serie</th>
+                        <th>Blockchain</th>
+                        <th>Ver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DNI</td>
+                        <td>21.728.276</td>
+                        <td>Bachiller en Ciencias Naturales</td>
+                        <td>Buenos Aires</td>
+                        <td>ESCUELA DE EDUCACIÓN SECUNDARIA N° 8</td>
+                        <td>0620224-00</td>
+                        <td>20/12/2024</td>
+                        <td>RESOLUCIÓN N° 302/12</td>
+                        <td>RM N° 2169/20</td>
+                        <td>06-00172621-2025</td>
+                        <td>
+                            <svg class="icon-blockchain" onclick="abrirModal()" viewBox="0 0 24 24" fill="none" stroke="#29b6f6" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </td>
+                        <td>
+                            <svg class="icon-ver" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="legal-text">
+        <p>A partir del 1 de noviembre de 2023, por Resolución CFE N° 440/23, los títulos son emitidos en formato digital. Para títulos emitidos desde esa fecha, el ReFE es el nuevo instrumento de legalización, certificación y confronte de autenticidad de la documentación educativa correspondiente a los niveles de educación secundaria y de educación superior, para su presentación dentro del territorio argentino.</p>
+        <br>
+        <p>Para títulos emitidos con anterioridad, consultar el circuito de legalización en https://www.argentina.gob.ar/servicio/legalizar-el-</p>
+    </div>
+
+    <div class="modal-overlay" id="modalBlockchain" onclick="cerrarModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title">
+                Blockchain Nacional del<br>Sistema Nacional de Titulos
+            </div>
+            <hr class="modal-divider">
+            <div class="modal-body">
+                
+                <div class="modal-icon-container">
+                    <svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25 80 L25 105 L35 95 L45 105 L45 80 Z" fill="#66c2ff"/>
+                        <path d="M55 80 L55 105 L65 95 L75 105 L75 80 Z" fill="#66c2ff"/>
+                        <rect x="5" y="5" width="90" height="75" rx="8" fill="#5cb8ff"/>
+                        <rect x="10" y="10" width="80" height="65" rx="5" fill="#e6f4ff"/>
+                        <rect x="20" y="25" width="60" height="8" rx="2" fill="#333333"/>
+                        <rect x="35" y="45" width="45" height="4" rx="2" fill="#66c2ff"/>
+                        <rect x="40" y="55" width="35" height="4" rx="2" fill="#66c2ff"/>
+                        <circle cx="35" cy="65" r="18" fill="#ffd700"/>
+                        <circle cx="35" cy="65" r="14" fill="#ffc107" stroke="#e6a800" stroke-width="1"/>
+                        <path d="M35 55 L38 60 L44 60 L40 65 L42 71 L35 68 L28 71 L30 65 L26 60 L32 60 Z" fill="#e6a800" opacity="0.5"/>
+                    </svg>
+                </div>
+
+                <div class="modal-text-container">
+                    <div class="text-ministerio">Ministerio de<br>Educación de la<br>República Argentina</div>
+                    <div class="text-certificado">Certificado MINED Títulos<br>digitales - está vigente</div>
+                    <div class="text-hash-label">Hash Blockchain Federal<br>Argentina (Cabeza de un<br>arbol de merkle):</div>
+                    <div class="text-hash-value">0x8c22743ed4dfa89f852e575<br>ae158144d526a46b1e0360987<br>53bf623555696ab0</div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <strong>Autoridad Firmante:</strong> LERAS María Andrea<br>
+                <strong>Fecha Sello de Tiempo:</strong> 21/05/2025 06:00:34
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modalBlockchain');
+        const seccionResultados = document.getElementById('seccion-resultados');
+
+        function abrirModal() {
+            modal.classList.add('active');
+        }
+
+        function cerrarModal(event) {
+            modal.classList.remove('active');
+        }
+
+        function nuevaBusqueda() {
+            document.getElementById('input-doc').value = '';
+            document.getElementById('input-apellido').value = '';
+            document.getElementById('input-nombre').value = '';
+            seccionResultados.style.display = 'none';
+        }
+
+        function buscarDatos() {
+            seccionResultados.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
